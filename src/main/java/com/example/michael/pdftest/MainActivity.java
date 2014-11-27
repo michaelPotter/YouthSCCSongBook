@@ -72,11 +72,8 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        tv_loading = new TextView(this);
-        setContentView(tv_loading);
-//        setContentView(R.layout.activity_main);
-        tv_loading.setGravity(Gravity.CENTER);
-        tv_loading.setTypeface(null, Typeface.BOLD);
+        setContentView(R.layout.activity_main);
+        tv_loading = (TextView) findViewById(R.id.tv_loading);
         downloadAndOpenPDF();
     }
 
@@ -151,7 +148,7 @@ public class MainActivity extends Activity {
                     Color.RED);
         } catch (final Exception e) {
             setTextError(
-                    "Failed to download image. Please check your internet connection.",
+                    "Failed to download file. Please check your internet connection.",
                     Color.RED);
         }
         return file;
