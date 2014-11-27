@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">PDFTest</string>
+    <string name="button_text">DOWNLOAD PDF</string>
+    <string name="action_settings">Settings</string>
+
+</resources>
