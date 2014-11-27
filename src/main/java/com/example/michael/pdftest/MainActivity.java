@@ -84,8 +84,8 @@ public class MainActivity extends Activity {
                 Uri path = Uri.fromFile(downloadFile(download_file_url));
                 try {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
-//                    intent.setDataAndType(path, "application/pdf");
-                    intent.setType("application/pdf");
+                    intent.setDataAndType(path, "application/pdf");
+//                    intent.setType("application/pdf");
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                     finish();
@@ -102,8 +102,8 @@ public class MainActivity extends Activity {
         File file = null;
         try {
             URL url = new URL(download_file_path);
-            URLConnection urlConnection = url.openConnection();
-//            urlConnection.setRequestMethod("GET");
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
             urlConnection.setDoOutput(true);
 
             // connect
