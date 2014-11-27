@@ -60,20 +60,6 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    /*
-     * Steps to build an intent:
-     * 1. Build the Intent
-     * 2. Verify it resolves
-     * 3. Start the activity if it's safe
-     */
-//    public void buttonPress(View view) {
-//        // download a pdf
-//        // Need to use a service? // Nope. Don't think so
-//
-//        // Verify it resolves
-//        // open it
-//    }
-/* */// Erase the second star to use copied code
     //################################################################################Their Code
     TextView tv_loading;
     String dest_file_path = "test.pdf";
@@ -96,18 +82,6 @@ public class MainActivity extends Activity {
 
 
     public void downloadAndOpenPDF() {
-//        Uri path = Uri.fromFile(downloadFile(download_file_url));
-//        try {
-//            Intent intent = new Intent(Intent.ACTION_VIEW);
-//            intent.setDataAndType(path, "application/pdf");
-//            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//            startActivity(intent);
-////            finish();
-//        } catch (ActivityNotFoundException e) {
-//            tv_loading.setError("PDF Reader application is not installed");
-//        }
-
-
         new Thread(new Runnable() {
             public void run() {
                 Uri path = Uri.fromFile(downloadFile(download_file_url));
@@ -126,28 +100,6 @@ public class MainActivity extends Activity {
 
 
     }
-
-//    public File downloadFile(String downloadFileURL) {
-//        File file = new File("file.pdf");
-//        try {
-//            URL url = new URL(downloadFileURL);
-//            BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
-//            PrintWriter writer = new PrintWriter(file);
-//
-//            String inputLine = "";
-//            while ((inputLine = in.readLine()) != null) {
-//                writer.write(inputLine + System.getProperty("line.seperator"));
-//                System.out.println(inputLine);
-//            }
-//            writer.close();
-//            in.close();
-//        } catch (MalformedURLException e) {
-//            System.out.println(e);
-//        } catch (IOException e) {
-//            System.out.println(e);
-//        }
-//        return file;
-//    }
 
     public File downloadFile(String download_file_path) {
         File file = null;
@@ -222,7 +174,5 @@ public class MainActivity extends Activity {
         });
     }
     //##########################################################################################
-
-//*/
 
 }
