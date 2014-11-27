@@ -65,39 +65,27 @@ public class MainActivity extends Activity {
     TextView tv_loading;
     int downloadedSize, totalsize = 0;
     float per = 0;
-
     File file;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        file = new File(
-                Environment.getExternalStorageDirectory()
-                , getString(R.string.dest_file_path)
-        );
         tv_loading = (TextView) findViewById(R.id.tv_loading);
-        if (!lookForFile()) {
-            Toast.makeText(this, "downloading and opening file", Toast.LENGTH_SHORT).show();
-            downloadAndOpenPDF();
-        }
-        Toast.makeText(this, "just opening file", Toast.LENGTH_SHORT).show();
-        openPDF();
-    }
 
-    public boolean lookForFile() {
-        File SDCardRoot = Environment.getExternalStorageDirectory();
-        // create a new file, to save the downloaded file
-        File file = new File(
-                Environment.getExternalStorageDirectory()
-                , getString(R.string.dest_file_path)
+        file = new File(
+                Environment.getExternalStorageDirectory(),
+                getString(R.string.dest_file_path)
         );
-        if (file.exists()) {
-            Toast.makeText(this, "file exists", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "file does not exist", Toast.LENGTH_SHORT).show();
+
+        if (!file.exists()) {
+//            Toast.makeText(this, "file does not exist", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "file does not exist; downloading file", Toast.LENGTH_SHORT).show();
+            downloadPDF();
         }
-        return file.exists();
+//        Toast.makeText(this, "file exists", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "file exists; opening file", Toast.LENGTH_SHORT).show();
+        openPDF();
     }
 
     public void openPDF() {
@@ -114,19 +102,10 @@ public class MainActivity extends Activity {
     }
 
 
-    public void downloadAndOpenPDF() {
+    public void downloadPDF() {
         new Thread(new Runnable() {
             public void run() {
-                Uri path = Uri.fromFile(downloadFile(getString(R.string.download_file_url)));
-                try {
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType(path, "application/pdf");
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                    finish();
-                } catch (ActivityNotFoundException e) {
-                    tv_loading.setError(getString(R.string.reader_not_installed));
-                }
+                downloadFile(getString(R.string.download_file_url));
             }
         }).start();
 
@@ -134,7 +113,7 @@ public class MainActivity extends Activity {
     }
 
     public File downloadFile(String download_file_path) {
-        File file = null;
+//        File file = null;
         try {
             URL url = new URL(download_file_path);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -145,9 +124,9 @@ public class MainActivity extends Activity {
             urlConnection.connect();
 
             // set the path where we want to save the file
-            File SDCardRoot = Environment.getExternalStorageDirectory();
+//            File SDCardRoot = Environment.getExternalStorageDirectory();
             // create a new file, to save the downloaded file
-            file = new File(SDCardRoot, getString(R.string.dest_file_path));
+//            file = new File(SDCardRoot, getString(R.string.dest_file_path));
 
             FileOutputStream fileOutput = new FileOutputStream(file);
 
