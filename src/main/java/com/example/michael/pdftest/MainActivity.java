@@ -62,35 +62,69 @@ public class MainActivity extends Activity {
 
     //################################################################################Their Code
     TextView tv_loading;
-    String dest_file_path = "test.pdf";
     int downloadedSize, totalsize = 0;
-    String download_file_url = "http://youthscc.com/SCC_YouthSongBook_June_2013_DIGITAL.pdf";
-
     float per = 0;
 
+    File file;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        file = new File(
+                Environment.getExternalStorageDirectory()
+                , getString(R.string.dest_file_path)
+        );
         tv_loading = (TextView) findViewById(R.id.tv_loading);
-        downloadAndOpenPDF();
+        if (!lookForFile()) {
+            Toast.makeText(this, "downloading and opening file", Toast.LENGTH_SHORT).show();
+            downloadAndOpenPDF();
+        }
+        Toast.makeText(this, "just opening file", Toast.LENGTH_SHORT).show();
+        openPDF();
+    }
+
+    public boolean lookForFile() {
+        File SDCardRoot = Environment.getExternalStorageDirectory();
+        // create a new file, to save the downloaded file
+        File file = new File(
+                Environment.getExternalStorageDirectory()
+                , getString(R.string.dest_file_path)
+        );
+        if (file.exists()) {
+            Toast.makeText(this, "file exists", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "file does not exist", Toast.LENGTH_SHORT).show();
+        }
+        return file.exists();
+    }
+
+    public void openPDF() {
+        Uri path = Uri.fromFile(file);
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(path, "application/pdf");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+        } catch (ActivityNotFoundException e) {
+            tv_loading.setError(getString(R.string.reader_not_installed));
+        }
     }
 
 
     public void downloadAndOpenPDF() {
         new Thread(new Runnable() {
             public void run() {
-                Uri path = Uri.fromFile(downloadFile(download_file_url));
+                Uri path = Uri.fromFile(downloadFile(getString(R.string.download_file_url)));
                 try {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setDataAndType(path, "application/pdf");
-//                    intent.setType("application/pdf");
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                     finish();
                 } catch (ActivityNotFoundException e) {
-                    tv_loading.setError("PDF Reader application is not installed");
+                    tv_loading.setError(getString(R.string.reader_not_installed));
                 }
             }
         }).start();
@@ -112,7 +146,7 @@ public class MainActivity extends Activity {
             // set the path where we want to save the file
             File SDCardRoot = Environment.getExternalStorageDirectory();
             // create a new file, to save the downloaded file
-            file = new File(SDCardRoot, dest_file_path);
+            file = new File(SDCardRoot, getString(R.string.dest_file_path));
 
             FileOutputStream fileOutput = new FileOutputStream(file);
 
@@ -121,7 +155,7 @@ public class MainActivity extends Activity {
 
             // this is the total size of the file which we are downloading
             totalsize = urlConnection.getContentLength();
-            setText("Starting PDF download...");
+            setText(getString(R.string.start_download));
 
             // create a buffer...
             byte[] buffer = new byte[1024 * 1024];
@@ -138,17 +172,17 @@ public class MainActivity extends Activity {
             }
             // close the output stream when complete
             fileOutput.close();
-            setText("Download Complete. Open PDF Application installed in the device");
+            setText(getString(R.string.end_download));
 
         } catch (final MalformedURLException e) {
-            setTextError("Some error occured. Press back and try again.",
+            setTextError(getString(R.string.some_error),
                     Color.RED);
         } catch (final IOException e) {
-            setTextError("Some error occured. Press back and try again.",
+            setTextError(getString(R.string.some_error),
                     Color.RED);
         } catch (final Exception e) {
             setTextError(
-                    "Failed to download file. Please check your internet connection.",
+                    getString(R.string.failed_download),
                     Color.RED);
         }
         return file;
