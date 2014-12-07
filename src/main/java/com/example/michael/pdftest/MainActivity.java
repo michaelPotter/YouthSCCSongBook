@@ -80,16 +80,14 @@ public class MainActivity extends Activity {
         );
 
         if (!file.exists()) {
-//            Toast.makeText(this, "file does not exist", Toast.LENGTH_SHORT).show();
             Toast.makeText(this, "file does not exist; downloading file", Toast.LENGTH_SHORT).show();
             downloadPDF();
         }
-//        Toast.makeText(this, "file exists", Toast.LENGTH_SHORT).show();
-        Toast.makeText(this, "file exists; opening file", Toast.LENGTH_SHORT).show();
-        openPDF();
+        Toast.makeText(this, "file exists", Toast.LENGTH_SHORT).show();
+
     }
 
-    public void openPDF() {
+    public void openPDF(View view) {
         Uri path = Uri.fromFile(file);
         try {
             Intent intent = new Intent(Intent.ACTION_VIEW);
