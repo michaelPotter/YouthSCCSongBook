@@ -3,6 +3,8 @@ package com.example.michael.pdftest;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.graphics.Color;
 import android.net.Uri;
@@ -72,6 +74,11 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         tv_loading = (TextView) findViewById(R.id.tv_loading);
+
+        if (isAdobeInstalled())
+            Toast.makeText(this, "adobe is installed", Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(this, "adobe is NOT installed", Toast.LENGTH_SHORT).show();
 
         file = new File(
                 Environment.getExternalStorageDirectory(),
@@ -166,6 +173,17 @@ public class MainActivity extends Activity {
                     Color.RED);
         }
         return file;
+    }
+
+    public boolean isAdobeInstalled() {
+        PackageManager manager = getPackageManager();
+        System.out.println(manager.getInstalledPackages(PackageManager.GET_ACTIVITIES));
+        for (PackageInfo p : manager.getInstalledPackages(PackageManager.GET_ACTIVITIES)) {
+            if (p.packageName.equals("com.adobe.reader")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     void setTextError(final String message, final int color) {
