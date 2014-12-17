@@ -186,6 +186,12 @@ public class MainActivity extends Activity {
         return false;
     }
 
+    public void sendUserToAdobeDownload() {
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.adobe.reader"));
+        startActivity(i);
+    }
+
     void setTextError(final String message, final int color) {
         runOnUiThread(new Runnable() {
             public void run() {
