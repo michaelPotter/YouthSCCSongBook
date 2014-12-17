@@ -80,7 +80,6 @@ public class MainActivity extends Activity {
             sendUserToAdobeDownload();
         }
 
-
         file = new File(
                 Environment.getExternalStorageDirectory(),
                 getString(R.string.dest_file_path)
@@ -143,6 +142,7 @@ public class MainActivity extends Activity {
 
             // this is the total size of the file which we are downloading
             totalsize = urlConnection.getContentLength();
+            Toast.makeText(this, "totalsize: " + totalsize, Toast.LENGTH_SHORT).show();
             setText(getString(R.string.start_download));
 
             // create a buffer...
@@ -174,6 +174,21 @@ public class MainActivity extends Activity {
                     Color.RED);
         }
         return file;
+    }
+
+    public int size() {
+        try {
+            URL url = new URL(getString(R.string.download_file_url));
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setDoOutput(true);
+            urlConnection.connect();
+            totalsize = urlConnection.getContentLength();
+            return totalsize;
+        } catch (Exception e) {
+            Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
+        }
+        return -1;
     }
 
     public boolean isAdobeInstalled() {
