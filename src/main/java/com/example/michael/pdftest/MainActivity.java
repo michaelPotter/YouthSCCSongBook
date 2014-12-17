@@ -75,10 +75,11 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         tv_loading = (TextView) findViewById(R.id.tv_loading);
 
-        if (isAdobeInstalled())
-            Toast.makeText(this, "adobe is installed", Toast.LENGTH_SHORT).show();
-        else
-            Toast.makeText(this, "adobe is NOT installed", Toast.LENGTH_SHORT).show();
+        if (!isAdobeInstalled()) {
+            Toast.makeText(this, "Adobe Reader is required to use this app. Please install", Toast.LENGTH_SHORT).show();
+            sendUserToAdobeDownload();
+        }
+
 
         file = new File(
                 Environment.getExternalStorageDirectory(),
