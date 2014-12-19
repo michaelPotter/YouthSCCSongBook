@@ -1,35 +1,29 @@
-package com.example.michael.pdftest;
+package com.michael.songBook;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Typeface;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.Gravity;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.HttpURLConnection;
-import java.net.URLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import java.net.HttpURLConnection;
 
 
 public class MainActivity extends Activity {
@@ -75,32 +69,61 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         tv_loading = (TextView) findViewById(R.id.tv_loading);
 
-        if (!isAdobeInstalled()) {
-            Toast.makeText(this, "Adobe Reader is required to use this app. Please install", Toast.LENGTH_SHORT).show();
-            sendUserToAdobeDownload();
+        Toast.makeText(this, "File size: " + size(), Toast.LENGTH_LONG).show();
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    if (!isAdobeInstalled()) {
+                        makeToast("Adobe Reader is required to use this app. Please install");
+                        sendUserToAdobeDownload();
+                        finish();
+                    }
+
+                    File folder = new File(Environment.getExternalStorageDirectory(),
+                            getString(R.string.folder_name));
+
+                    if (!folder.exists()) {
+                        folder.mkdir();
+                    }
+
+                    file = new File(folder, getString(R.string.dest_file_path));
+
+                    if (!file.exists()) {
+                        makeToast("file does not exist, downloading file");
+                        downloadFile(getString(R.string.download_file_url));
+                        if (!isFileSizeCorrect(
+                                file, new URL(getString(R.string.download_file_url)))) ;
+
+                        file.delete();
+                    }
+
+                    if (isNetworkAvailable()) {
+                        if (!isFileSizeCorrect(file, new URL(getString(R.string.download_file_url)))) {
+                            downloadFile(getString(R.string.download_file_url));
+                        }
+                    }
+
+                    makeToast("file exists, opening");
+                    openPDF();
+
+                } catch(MalformedURLException e) {
+
+                }
+//                  Toast.makeText(this, "file exists; opening file", Toast.LENGTH_SHORT).show();
+            }
+
         }
+    ).start();
 
 
-        file = new File(
-                Environment.getExternalStorageDirectory(),
-                getString(R.string.dest_file_path)
-        );
-
-        if (!file.exists()) {
-//            Toast.makeText(this, "file does not exist", Toast.LENGTH_SHORT).show();
-            Toast.makeText(this, "file does not exist; downloading file", Toast.LENGTH_SHORT).show();
-            downloadPDF();
-        }
-//        Toast.makeText(this, "file exists", Toast.LENGTH_SHORT).show();
-        Toast.makeText(this, "file exists; opening file", Toast.LENGTH_SHORT).show();
-        openPDF();
-    }
+}
 
     public void openPDF() {
         Uri path = Uri.fromFile(file);
         try {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setDataAndType(path, "application/pdf");
+            intent.setPackage("com.adobe.reader");
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
             finish();
@@ -172,8 +195,47 @@ public class MainActivity extends Activity {
             setTextError(
                     getString(R.string.failed_download),
                     Color.RED);
+            setTextError(e.toString(), Color.RED);
         }
         return file;
+    }
+
+    public boolean isFileSizeCorrect(File file, URL url) {
+        int totalsize = 0;
+        try {
+
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setDoOutput(true);
+            urlConnection.connect();
+            totalsize = urlConnection.getContentLength();
+        } catch (Exception e) {
+            Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
+            totalsize = -1;
+        }
+        return totalsize == file.length();
+
+    }
+
+
+    public int size() {
+        int totalsize = -1;
+
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    URL url = new URL(getString(R.string.download_file_url));
+                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setRequestMethod("GET");
+                    urlConnection.setDoOutput(true);
+                    urlConnection.connect();
+                    int totalsize = urlConnection.getContentLength();
+                } catch (Exception e) {
+//                    Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        }).start();
+        return totalsize;
     }
 
     public boolean isAdobeInstalled() {
@@ -191,6 +253,7 @@ public class MainActivity extends Activity {
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.adobe.reader"));
         startActivity(i);
+        finish();
     }
 
     void setTextError(final String message, final int color) {
@@ -208,6 +271,21 @@ public class MainActivity extends Activity {
                 tv_loading.setText(txt);
             }
         });
+    }
+
+    public void makeToast(final String text) {
+        this.runOnUiThread(new Runnable() {
+            public void run() {
+                Toast.makeText(MainActivity.this, text, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
     //##########################################################################################
 

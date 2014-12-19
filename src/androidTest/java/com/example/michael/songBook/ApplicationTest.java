@@ -1,4 +1,4 @@
-package com.example.michael.pdftest;
+package com.example.michael.songBook;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
