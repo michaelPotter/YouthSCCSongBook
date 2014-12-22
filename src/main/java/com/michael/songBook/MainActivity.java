@@ -69,14 +69,13 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         tv_loading = (TextView) findViewById(R.id.tv_loading);
 
-        Toast.makeText(this, "File size: " + size(), Toast.LENGTH_LONG).show();
         new Thread(new Runnable() {
             public void run() {
                 try {
                     if (!isAdobeInstalled()) {
                         makeToast("Adobe Reader is required to use this app. Please install");
                         sendUserToAdobeDownload();
-                        finish();
+                        return;
                     }
 
                     File folder = new File(Environment.getExternalStorageDirectory(),
@@ -109,7 +108,6 @@ public class MainActivity extends Activity {
                 } catch(MalformedURLException e) {
 
                 }
-//                  Toast.makeText(this, "file exists; opening file", Toast.LENGTH_SHORT).show();
             }
 
         }
@@ -165,7 +163,7 @@ public class MainActivity extends Activity {
             InputStream inputStream = urlConnection.getInputStream();
 
             // this is the total size of the file which we are downloading
-            totalsize = urlConnection.getContentLength();
+            totalsize = 3000000; //urlConnection.getContentLength();
             setText(getString(R.string.start_download));
 
             // create a buffer...
@@ -229,7 +227,8 @@ public class MainActivity extends Activity {
                     urlConnection.setRequestMethod("GET");
                     urlConnection.setDoOutput(true);
                     urlConnection.connect();
-                    int totalsize = urlConnection.getContentLength();
+                    totalsize = urlConnection.getContentLength();
+                    makeToast("" + urlConnection.getContentLength());
                 } catch (Exception e) {
 //                    Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
                 }
@@ -252,8 +251,8 @@ public class MainActivity extends Activity {
     public void sendUserToAdobeDownload() {
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.adobe.reader"));
+//        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
-        finish();
     }
 
     void setTextError(final String message, final int color) {
