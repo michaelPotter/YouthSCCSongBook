@@ -71,43 +71,41 @@ public class MainActivity extends Activity {
 
         new Thread(new Runnable() {
             public void run() {
-                try {
-                    if (!isAdobeInstalled()) {
-                        makeToast("Adobe Reader is required to use this app. Please install");
-                        sendUserToAdobeDownload();
-                        return;
-                    }
-
-                    File folder = new File(Environment.getExternalStorageDirectory(),
-                            getString(R.string.folder_name));
-
-                    if (!folder.exists()) {
-                        folder.mkdir();
-                    }
-
-                    file = new File(folder, getString(R.string.dest_file_path));
-
-                    if (!file.exists()) {
-                        makeToast("file does not exist, downloading file");
-                        downloadFile(getString(R.string.download_file_url));
-                        if (!isFileSizeCorrect(
-                                file, new URL(getString(R.string.download_file_url)))) ;
-
-                        file.delete();
-                    }
-
-                    if (isNetworkAvailable()) {
-                        if (!isFileSizeCorrect(file, new URL(getString(R.string.download_file_url)))) {
-                            downloadFile(getString(R.string.download_file_url));
-                        }
-                    }
-
-                    makeToast("file exists, opening");
-                    openPDF();
-
-                } catch(MalformedURLException e) {
-
+                if (!isAdobeInstalled()) {
+                    makeToast("Adobe Reader is required to use this app. Please install");
+                    sendUserToAdobeDownload();
+                    finish();
+                    return;
                 }
+
+                File folder = new File(Environment.getExternalStorageDirectory(),
+                        getString(R.string.folder_name));
+
+                if (!folder.exists()) {
+                    folder.mkdir();
+                }
+
+                file = new File(folder, getString(R.string.dest_file_path));
+
+                if (!file.exists()) {
+                    makeToast("file does not exist, downloading file");
+                    downloadFile(getString(R.string.download_file_url));
+//                        if (!isFileSizeCorrect(
+//                                file, new URL(getString(R.string.download_file_url)))) ;
+//
+//                        file.delete();
+                }
+
+//                    if (isNetworkAvailable()) {
+//                        if (!isFileSizeCorrect(file, new URL(getString(R.string.download_file_url)))) {
+//                            downloadFile(getString(R.string.download_file_url));
+//                        }
+//                    }
+
+                setText("Opening file");
+                openPDF();
+
+
             }
 
         }
@@ -122,7 +120,7 @@ public class MainActivity extends Activity {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setDataAndType(path, "application/pdf");
             intent.setPackage("com.adobe.reader");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
             finish();
         } catch (ActivityNotFoundException e) {
@@ -227,7 +225,7 @@ public class MainActivity extends Activity {
                     urlConnection.setRequestMethod("GET");
                     urlConnection.setDoOutput(true);
                     urlConnection.connect();
-                    totalsize = urlConnection.getContentLength();
+                    int totalsize = urlConnection.getContentLength();
                     makeToast("" + urlConnection.getContentLength());
                 } catch (Exception e) {
 //                    Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
@@ -251,7 +249,7 @@ public class MainActivity extends Activity {
     public void sendUserToAdobeDownload() {
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.adobe.reader"));
-//        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
     }
 
