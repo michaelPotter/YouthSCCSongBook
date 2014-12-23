@@ -21,9 +21,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Scanner;
 
 
 public class MainActivity extends Activity {
@@ -197,41 +199,42 @@ public class MainActivity extends Activity {
     }
 
     public boolean isFileSizeCorrect(File file, URL url) {
-        int totalsize = 0;
-        try {
-
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestMethod("GET");
-            urlConnection.setDoOutput(true);
-            urlConnection.connect();
-            totalsize = urlConnection.getContentLength();
-        } catch (Exception e) {
-            Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
-            totalsize = -1;
-        }
-        return totalsize == file.length();
-
+        return size() == file.length();
     }
 
 
     public int size() {
         int totalsize = -1;
 
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    URL url = new URL(getString(R.string.download_file_url));
-                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                    urlConnection.setRequestMethod("GET");
-                    urlConnection.setDoOutput(true);
-                    urlConnection.connect();
-                    int totalsize = urlConnection.getContentLength();
-                    makeToast("" + urlConnection.getContentLength());
-                } catch (Exception e) {
-//                    Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
+//        new Thread(new Runnable() {
+//            public void run() {
+        try {
+            File sizeFile = new File(Environment.getExternalStorageDirectory(),
+                    getString(R.string.folder_name) + "/" + getString(R.string.size_file));
+            if (!sizeFile.exists()) {
+                URL url = new URL(getString(R.string.size_file_url));
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.setDoOutput(true);
+                urlConnection.connect();
+                FileOutputStream out = new FileOutputStream(sizeFile);
+                InputStream in = urlConnection.getInputStream();
+                byte[] buffer = new byte[1024 * 1024];
+                int bufferLength = 0;
+
+                while ((bufferLength = in.read(buffer)) > 0) {
+                    out.write(buffer, 0, bufferLength);
                 }
+                in.close();
+                out.close();
             }
-        }).start();
+            Scanner scan = new Scanner(sizeFile);
+            totalsize = scan.nextInt();
+        } catch (Exception e) {
+                    Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
+        }
+//            }
+//        }).start();
         return totalsize;
     }
 

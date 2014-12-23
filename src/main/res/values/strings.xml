@@ -10,7 +10,9 @@
     <string name="failed_download">Failed to download file. Please check your internet connection.</string>
     <string name="reader_not_installed">PDF Reader application is not installed</string>
     <string name="download_file_url">http://youthscc.com/SCC_YouthSongBook_June_2013_DIGITAL.pdf</string>
+    <string name="size_file_url">http://youthscc.com/songbooksize.txt</string>
     <string name="folder_name">SongBook</string>
     <string name="dest_file_path">SCC_YouthSongBook_DIGITAL.pdf</string>
+    <string name="size_file">.size.txt</string>
 
 </resources>
