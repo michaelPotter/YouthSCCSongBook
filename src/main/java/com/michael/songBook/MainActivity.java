@@ -88,7 +88,7 @@ public class MainActivity extends Activity {
                 file = new File(folder, getString(R.string.dest_file_path));
 
                 if (!file.exists()) {
-                    makeToast("file does not exist, downloading file");
+//                    makeToast("file does not exist, downloading file");
                     downloadFile(getString(R.string.download_file_url));
 //                        if (!isFileSizeCorrect(
 //                                file, new URL(getString(R.string.download_file_url)))) ;
@@ -104,8 +104,6 @@ public class MainActivity extends Activity {
 
                 setText("Opening file");
                 openPDF();
-
-
             }
 
         }
@@ -172,10 +170,12 @@ public class MainActivity extends Activity {
                 fileOutput.write(buffer, 0, bufferLength);
                 downloadedSize += bufferLength;
                 per = ((float) downloadedSize / totalsize) * 100;
-                setText("TotalPDF File size : "
-                        + (totalsize / 1024)
-                        + " KB\n\nDownloading PDF " + (int) per
-                        + "% complete");
+//                setText("TotalPDF File size : "
+//                        + (totalsize / 1024 / 1024.0)
+//                        + " MB\n\nDownloading PDF " + (int) per
+//                        + "% complete");
+                setText(String.format("TotalPDF File size : %.2f MB\n\nDownloading PDF %d%s complete",
+                        (totalsize / 1024 / 1024.0), (int) per, "%"));
             }
             // close the output stream when complete
             fileOutput.close();
@@ -187,11 +187,11 @@ public class MainActivity extends Activity {
         } catch (final IOException e) {
             setTextError(getString(R.string.some_error),
                     Color.RED);
-        } catch (final Exception e) {
-            setTextError(
-                    getString(R.string.failed_download),
-                    Color.RED);
-            setTextError(e.toString(), Color.RED);
+//        } catch (final Exception e) {
+//            setTextError(
+//                    getString(R.string.failed_download),
+//                    Color.RED);
+//            setTextError(e.toString(), Color.RED);
         }
         return file;
     }
