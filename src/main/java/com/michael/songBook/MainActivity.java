@@ -21,21 +21,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
 
-
 public class MainActivity extends Activity {
-/* /
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-    }
-//*/
+    TextView tv_loading;
+    File file;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -58,12 +51,6 @@ public class MainActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
-
-    //################################################################################Their Code
-    TextView tv_loading;
-    int downloadedSize, totalsize = 0;
-    float per = 0;
-    File file;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,7 +84,6 @@ public class MainActivity extends Activity {
 //
 //                        file.delete();
                 }
-
 //                    if (isNetworkAvailable()) {
 //                        if (!isFileSizeCorrect(file, new URL(getString(R.string.download_file_url)))) {
 //                            downloadFile(getString(R.string.download_file_url));
@@ -107,11 +93,8 @@ public class MainActivity extends Activity {
                 setText("Opening file");
                 openPDF();
             }
-
         }
     ).start();
-
-
 }
 
     public void openPDF() {
@@ -135,13 +118,14 @@ public class MainActivity extends Activity {
                 downloadFile(getString(R.string.download_file_url));
             }
         }).start();
-
-
     }
 
     public File downloadFile(String download_file_path) {
-//        File file = null;
         try {
+            int downloadedSize = 0;
+            int totalsize = 0;
+            float per = 0;
+            
             URL url = new URL(download_file_path);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
@@ -287,6 +271,4 @@ public class MainActivity extends Activity {
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
-    //##########################################################################################
-
 }
