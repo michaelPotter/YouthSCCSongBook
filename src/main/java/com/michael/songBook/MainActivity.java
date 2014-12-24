@@ -60,38 +60,42 @@ public class MainActivity extends Activity {
 
         new Thread(new Runnable() {
             public void run() {
-                if (!isAdobeInstalled()) {
-                    makeToast("Adobe Reader is required to use this app. Please install");
-                    sendUserToAdobeDownload();
-                    finish();
-                    return;
-                }
+                try {
+                    if (!isAdobeInstalled()) {
+                        makeToast("Adobe Reader is required to use this app. Please install");
+                        sendUserToAdobeDownload();
+                        finish();
+                        return;
+                    }
 
-                File folder = new File(Environment.getExternalStorageDirectory(),
-                        getString(R.string.folder_name));
+                    File folder = new File(Environment.getExternalStorageDirectory(),
+                            getString(R.string.folder_name));
 
-                if (!folder.exists()) {
-                    folder.mkdir();
-                }
+                    if (!folder.exists()) {
+                        folder.mkdir();
+                    }
 
-                file = new File(folder, getString(R.string.dest_file_path));
+                    file = new File(folder, getString(R.string.dest_file_path));
 
-                if (!file.exists()) {
+                    if (!file.exists()) {
 //                    makeToast("file does not exist, downloading file");
-                    downloadFile(getString(R.string.download_file_url));
+                        downloadFile(getString(R.string.download_file_url));
 //                        if (!isFileSizeCorrect(
 //                                file, new URL(getString(R.string.download_file_url)))) ;
 //
 //                        file.delete();
-                }
-//                    if (isNetworkAvailable()) {
-//                        if (!isFileSizeCorrect(file, new URL(getString(R.string.download_file_url)))) {
-//                            downloadFile(getString(R.string.download_file_url));
-//                        }
-//                    }
+                    }
+                    if (isNetworkAvailable()) {
+                        if (!isFileSizeCorrect(file, new URL(getString(R.string.download_file_url)))) {
+                            downloadFile(getString(R.string.download_file_url));
+                        }
+                    }
 
-                setText("Opening file");
-                openPDF();
+                    setText("Opening file");
+                    openPDF();
+                } catch (MalformedURLException exception) {
+
+                }
             }
         }
     ).start();
@@ -125,7 +129,7 @@ public class MainActivity extends Activity {
             int downloadedSize = 0;
             int totalsize = 0;
             float per = 0;
-            
+
             URL url = new URL(download_file_path);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
@@ -187,7 +191,7 @@ public class MainActivity extends Activity {
     }
 
 
-    public int size() {
+    public double size() {
         int totalsize = -1;
 
 //        new Thread(new Runnable() {
@@ -212,10 +216,15 @@ public class MainActivity extends Activity {
                 in.close();
                 out.close();
             }
+
             Scanner scan = new Scanner(sizeFile);
-            totalsize = scan.nextInt();
-        } catch (Exception e) {
-                    Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
+            totalsize = Integer.parseInt(scan.next());
+//            totalsize = scan.nextInt();
+
+        } catch (MalformedURLException e) {
+            makeToast(e.toString());
+        } catch (IOException e) {
+            makeToast(e.toString());
         }
 //            }
 //        }).start();
