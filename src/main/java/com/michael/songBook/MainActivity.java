@@ -98,9 +98,12 @@ public class MainActivity extends Activity {
                 }
             }
         }
-    ).start();
+        ).start();
 }
 
+    /**
+     * Opens the pdf in adobe reader
+     */
     public void openPDF() {
         Uri path = Uri.fromFile(file);
         try {
@@ -115,7 +118,9 @@ public class MainActivity extends Activity {
         }
     }
 
-
+    /**
+     * Downloads the pdf on a new thread
+     */
     public void downloadPDF() {
         new Thread(new Runnable() {
             public void run() {
@@ -124,6 +129,11 @@ public class MainActivity extends Activity {
         }).start();
     }
 
+    /**
+     * Downloads the file from the given url path
+     * @param download_file_path
+     * @return
+     */
     public File downloadFile(String download_file_path) {
         try {
             int downloadedSize = 0;
@@ -137,11 +147,6 @@ public class MainActivity extends Activity {
 
             // connect
             urlConnection.connect();
-
-            // set the path where we want to save the file
-//            File SDCardRoot = Environment.getExternalStorageDirectory();
-            // create a new file, to save the downloaded file
-//            file = new File(SDCardRoot, getString(R.string.dest_file_path));
 
             FileOutputStream fileOutput = new FileOutputStream(file);
 
@@ -160,10 +165,6 @@ public class MainActivity extends Activity {
                 fileOutput.write(buffer, 0, bufferLength);
                 downloadedSize += bufferLength;
                 per = ((float) downloadedSize / totalsize) * 100;
-//                setText("TotalPDF File size : "
-//                        + (totalsize / 1024 / 1024.0)
-//                        + " MB\n\nDownloading PDF " + (int) per
-//                        + "% complete");
                 setText(String.format("TotalPDF File size : %.2f MB\n\nDownloading PDF %d%s complete",
                         (totalsize / 1024 / 1024.0), (int) per, "%"));
             }
@@ -177,20 +178,25 @@ public class MainActivity extends Activity {
         } catch (final IOException e) {
             setTextError(getString(R.string.some_error),
                     Color.RED);
-//        } catch (final Exception e) {
-//            setTextError(
-//                    getString(R.string.failed_download),
-//                    Color.RED);
-//            setTextError(e.toString(), Color.RED);
         }
         return file;
     }
 
+    /**
+     * Returns whether the given file matches the intended file length
+     * @param file
+     * @param url
+     * @return
+     */
     public boolean isFileSizeCorrect(File file, URL url) {
         return size() == file.length();
     }
 
 
+    /**
+     * Returns the intended size of the pdf file
+     * @return
+     */
     public double size() {
         int totalsize = -1;
 
@@ -231,6 +237,10 @@ public class MainActivity extends Activity {
         return totalsize;
     }
 
+    /**
+     * Returns whether the adobe reader app is installed
+     * @return
+     */
     public boolean isAdobeInstalled() {
         PackageManager manager = getPackageManager();
         System.out.println(manager.getInstalledPackages(PackageManager.GET_ACTIVITIES));
@@ -242,6 +252,9 @@ public class MainActivity extends Activity {
         return false;
     }
 
+    /**
+     * Sends the user to the play store page for adobe reader
+     */
     public void sendUserToAdobeDownload() {
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.adobe.reader"));
@@ -249,6 +262,11 @@ public class MainActivity extends Activity {
         startActivity(i);
     }
 
+    /**
+     * Sets the Textview text and color
+     * @param message
+     * @param color
+     */
     void setTextError(final String message, final int color) {
         runOnUiThread(new Runnable() {
             public void run() {
@@ -258,6 +276,10 @@ public class MainActivity extends Activity {
         });
     }
 
+    /**
+     * Sets the TextView text
+     * @param txt
+     */
     void setText(final String txt) {
         runOnUiThread(new Runnable() {
             public void run() {
@@ -266,6 +288,10 @@ public class MainActivity extends Activity {
         });
     }
 
+    /**
+     * Creates a toast with the given text on the ui thread
+     * @param text
+     */
     public void makeToast(final String text) {
         this.runOnUiThread(new Runnable() {
             public void run() {
@@ -274,6 +300,10 @@ public class MainActivity extends Activity {
         });
     }
 
+    /**
+     * Checks to see if a network is available
+     * @return
+     */
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
