@@ -1,8 +1,10 @@
 package com.michael.songBook;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -12,6 +14,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Looper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -56,49 +59,60 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         tv_loading = (TextView) findViewById(R.id.tv_loading);
 
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    if (!isAdobeInstalled()) {
-                        makeToast("Adobe Reader is required to use this app. Please install");
-                        sendUserToAdobeDownload();
-                        finish();
-                        return;
-                    }
+        if (!isAdobeInstalled()) {
+//            makeToast("Adobe Reader is required to use this app. Please install");
+//            sendUserToAdobeDownload();
+            showDialog();
+//            finish(); // finish(); return; will kill dialog box if dialog is shown
+//            return;
+        } else {
 
-                    File folder = new File(Environment.getExternalStorageDirectory(),
-                            getString(R.string.folder_name));
+            new Thread(new Runnable() {
+                public void run() {
+                    Looper.prepare();
+                    try {
 
-                    if (!folder.exists()) {
-                        folder.mkdir();
-                    }
 
-                    file = new File(folder, getString(R.string.dest_file_path));
+                        File folder = new File(Environment.getExternalStorageDirectory(),
+                                getString(R.string.folder_name));
 
-                    if (!file.exists()) {
+                        if (!folder.exists()) {
+                            folder.mkdir();
+                        }
+
+                        file = new File(folder, getString(R.string.dest_file_path));
+
+                        if (!file.exists()) {
 //                    makeToast("file does not exist, downloading file");
-                        downloadFile(getString(R.string.download_file_url));
+                            downloadFile(getString(R.string.download_file_url));
 //                        if (!isFileSizeCorrect(
 //                                file, new URL(getString(R.string.download_file_url)))) ;
 //
 //                        file.delete();
-                    }
-                    if (isNetworkAvailable()) {
-                        if (!isFileSizeCorrect(file, new URL(getString(R.string.download_file_url)))) {
-                            downloadFile(getString(R.string.download_file_url));
                         }
+                        if (isNetworkAvailable()) {
+                            if (!isFileSizeCorrect(file, new URL(getString(R.string.download_file_url)))) {
+                                downloadFile(getString(R.string.download_file_url));
+                            }
+                        }
+
+                        setText("Opening file");
+                        openPDF();
+                    } catch (MalformedURLException exception) {
+
                     }
-
-                    setText("Opening file");
-                    openPDF();
-                } catch (MalformedURLException exception) {
-
                 }
             }
+            ).start();
         }
-        ).start();
 }
 
     /**
@@ -243,7 +257,6 @@ public class MainActivity extends Activity {
      */
     public boolean isAdobeInstalled() {
         PackageManager manager = getPackageManager();
-        System.out.println(manager.getInstalledPackages(PackageManager.GET_ACTIVITIES));
         for (PackageInfo p : manager.getInstalledPackages(PackageManager.GET_ACTIVITIES)) {
             if (p.packageName.equals("com.adobe.reader")) {
                 return true;
@@ -309,5 +322,26 @@ public class MainActivity extends Activity {
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    private void showDialog() {
+
+//        this.runOnUiThread(new Runnable() {
+//            public void run() {
+//                Looper.prepare();
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(getString(R.string.dialog_message))
+                        .setTitle(getString(R.string.dialog_title));
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked OK button
+                        sendUserToAdobeDownload();
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+//            }
+//        });
     }
 }

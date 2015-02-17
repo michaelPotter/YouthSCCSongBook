@@ -14,5 +14,8 @@
     <string name="folder_name">SongBook</string>
     <string name="dest_file_path">SCC_YouthSongBook_DIGITAL.pdf</string>
     <string name="size_file">.size.txt</string>
+    <string name="ok">OK</string>
+    <string name="dialog_title">Adobe Required</string>
+    <string name="dialog_message">A separate app, Adobe Reader, is required to use SongBook. Press OK to open the download page. </string>
 
 </resources>
