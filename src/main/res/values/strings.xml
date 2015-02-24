@@ -16,6 +16,6 @@
     <string name="size_file">.size.txt</string>
     <string name="ok">OK</string>
     <string name="dialog_title">Adobe Required</string>
-    <string name="dialog_message">A separate app, Adobe Reader, is required to use SongBook. Press OK to open the download page. </string>
+    <string name="dialog_message">An additional app, Adobe Reader, is required to use SongBook. Press OK to open the download page. </string>
 
 </resources>
