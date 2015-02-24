@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -343,5 +344,23 @@ public class MainActivity extends Activity {
                 dialog.show();
 //            }
 //        });
+    }
+
+    private void savePDFToPhone() {
+        File file = new File(Environment.getExternalStorageDirectory(),
+                getString(R.string.folder_name) + "/" + "songbookTest.pdf");
+        try {
+            InputStream input = getAssets().open("SCC_YouthSongBook_DIGITAL.pdf");
+            OutputStream output = new FileOutputStream(file);
+            byte[] b = new byte[100];
+            while (input.read() != -1) {
+                output.write(b);
+            }
+            input.close();
+            output.close();
+        } catch (IOException e) {
+            makeToast("error in saving pdf");
+            e.printStackTrace();
+        }
     }
 }
