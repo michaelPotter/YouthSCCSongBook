@@ -69,11 +69,7 @@ public class MainActivity extends Activity {
         tv_loading = (TextView) findViewById(R.id.tv_loading);
 
         if (!isAdobeInstalled()) {
-//            makeToast("Adobe Reader is required to use this app. Please install");
-//            sendUserToAdobeDownload();
             showDialog();
-//            finish(); // finish(); return; will kill dialog box if dialog is shown
-//            return;
         } else {
 
             new Thread(new Runnable() {
@@ -94,18 +90,7 @@ public class MainActivity extends Activity {
                         if (!file.exists()) {
 							setText("Saving PDF to phone");
 							savePDFToPhone();
-//                    makeToast("file does not exist, downloading file");
-//                            downloadFile(getString(R.string.download_file_url));
-//                        if (!isFileSizeCorrect(
-//                                file, new URL(getString(R.string.download_file_url)))) ;
-//
-//                        file.delete();
                         }
-//                        if (isNetworkAvailable()) {
-//                            if (!isFileSizeCorrect(file, new URL(getString(R.string.download_file_url)))) {
-//                                downloadFile(getString(R.string.download_file_url));
-//                            }
-//                        }
 
                         setText("Opening file");
                         openPDF();
@@ -351,7 +336,7 @@ public class MainActivity extends Activity {
 
     private void savePDFToPhone() {
         File file = new File(Environment.getExternalStorageDirectory(),
-                getString(R.string.folder_name) + "/" + getString(R.string.dest_file_path)); //"songbookTest.pdf");
+                getString(R.string.folder_name) + "/" + getString(R.string.dest_file_path));
         try {
             InputStream input = getAssets().open("SCC_YouthSongBook_DIGITAL.pdf");
             OutputStream output = new FileOutputStream(file);
