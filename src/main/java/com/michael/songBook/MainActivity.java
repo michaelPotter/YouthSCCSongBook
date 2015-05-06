@@ -92,22 +92,24 @@ public class MainActivity extends Activity {
                         file = new File(folder, getString(R.string.dest_file_path));
 
                         if (!file.exists()) {
+							setText("Saving PDF to phone");
+							savePDFToPhone();
 //                    makeToast("file does not exist, downloading file");
-                            downloadFile(getString(R.string.download_file_url));
+//                            downloadFile(getString(R.string.download_file_url));
 //                        if (!isFileSizeCorrect(
 //                                file, new URL(getString(R.string.download_file_url)))) ;
 //
 //                        file.delete();
                         }
-                        if (isNetworkAvailable()) {
-                            if (!isFileSizeCorrect(file, new URL(getString(R.string.download_file_url)))) {
-                                downloadFile(getString(R.string.download_file_url));
-                            }
-                        }
+//                        if (isNetworkAvailable()) {
+//                            if (!isFileSizeCorrect(file, new URL(getString(R.string.download_file_url)))) {
+//                                downloadFile(getString(R.string.download_file_url));
+//                            }
+//                        }
 
                         setText("Opening file");
                         openPDF();
-                    } catch (MalformedURLException exception) {
+                    } catch (Exception exception) {
 
                     }
                 }
@@ -349,12 +351,12 @@ public class MainActivity extends Activity {
 
     private void savePDFToPhone() {
         File file = new File(Environment.getExternalStorageDirectory(),
-                getString(R.string.folder_name) + "/" + "songbookTest.pdf");
+                getString(R.string.folder_name) + "/" + getString(R.string.dest_file_path)); //"songbookTest.pdf");
         try {
             InputStream input = getAssets().open("SCC_YouthSongBook_DIGITAL.pdf");
             OutputStream output = new FileOutputStream(file);
             byte[] b = new byte[100];
-            while (input.read() != -1) {
+            while (input.read(b) != -1) {
                 output.write(b);
             }
             input.close();
